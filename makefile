@@ -23,7 +23,7 @@ ctags:       GIT := universal-ctags/ctags
 mc:          GIT := MidnightCommander/mc
 
 # Make specific args
-neovim: MAKE_ARGS := CMAKE_BUILD_TYPE=RelWithDebInfo
+neovim: MAKE_ARGS := CMAKE_BUILD_TYPE=Release
 
 MAKE_TARGETS := verilator iverilog neovim ctags mc
 CARGO_TARGETS := svlint bat ripgrep lsd du-dust fd-find hyperfine bender
