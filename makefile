@@ -21,15 +21,17 @@ fzf:         GIT := junegunn/fzf
 bender:      GIT := pulp-platform/bender
 ctags:       GIT := universal-ctags/ctags
 mc:          GIT := MidnightCommander/mc
+svls:        GIT := dalance/svls
+veridian:    GIT := vivekmalneedi/veridian
 
 # Make specific args
 neovim: MAKE_ARGS := CMAKE_BUILD_TYPE=Release
 
 MAKE_TARGETS := verilator iverilog neovim ctags mc
-CARGO_TARGETS := svlint bat ripgrep lsd du-dust fd-find hyperfine bender
+CARGO_TARGETS := bat ripgrep lsd du-dust fd-find hyperfine bender veridian
 
 .PHONY: check_dep svlint verible $(MAKE_TARGETS) $(CARGO_TARGETS) fzf
-default all: verible svlint $(CARGO_TARGETS) $(MAKE_TARGETS) fzf
+default all: verible svlint $(CARGO_TARGETS) $(MAKE_TARGETS) fzf 
 
 check_dep:
 	@$(foreach _,$(TOOLS),$(if $(shell apt list $(_) 2>/dev/null|grep installed),,$(eval INSTALL_LIST += $(_)))) \
@@ -104,7 +106,8 @@ $(CARGO_TARGETS):
 		git switch master && \
 		git pull && \
 		cargo build --release && \
-		cargo install --force $@;\
+		cp `find target/release/ -maxdepth 1 -type f -executable` ~/.cargo/bin/ ; \
+#		cargo install --force $@;\
 	fi;
 
 $(MAKE_TARGETS):
