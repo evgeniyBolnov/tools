@@ -34,7 +34,7 @@ CARGO_TARGETS := bat ripgrep lsd du-dust fd-find hyperfine bender veridian
 default all: verible svlint $(CARGO_TARGETS) $(MAKE_TARGETS) fzf 
 
 check_dep:
-	@$(foreach _,$(TOOLS),$(if $(shell apt list $(_) 2>/dev/null|grep installed),,$(eval INSTALL_LIST += $(_)))) \
+	@$(foreach _,$(TOOLS),$(if $(shell dpkg -s --no-pager $(_) 2>/dev/null|grep installed),,$(eval INSTALL_LIST += $(_)))) \
 	$(if $(INSTALL_LIST),\
 		$(info List to install: $(INSTALL_LIST)) \
 		if ! [ `which bazel` ]; then \
@@ -107,7 +107,6 @@ $(CARGO_TARGETS):
 		git pull && \
 		cargo build --release && \
 		cp `find target/release/ -maxdepth 1 -type f -executable` ~/.cargo/bin/ ; \
-#		cargo install --force $@;\
 	fi;
 
 $(MAKE_TARGETS):
