@@ -32,7 +32,7 @@ MAKE_TARGETS := verilator iverilog neovim ctags mc
 CARGO_TARGETS := bat ripgrep lsd du-dust fd-find hyperfine bender veridian
 
 .PHONY: check_dep svlint verible $(MAKE_TARGETS) $(CARGO_TARGETS) fzf
-default all: verible svlint $(CARGO_TARGETS) $(MAKE_TARGETS) fzf 
+default all: verible svlint $(CARGO_TARGETS) $(MAKE_TARGETS) fzf
 
 check_dep:
 	@$(foreach _,$(TOOLS),$(if $(shell dpkg -s --no-pager $(_) 2>/dev/null|grep installed),,$(eval INSTALL_LIST += $(_)))) \
@@ -69,7 +69,7 @@ verible:
 		cd ./$@ && \
 		git switch master && \
 		git pull && \
-		bazel build $(BAZEL_ARG) -c opt //... && \
+		bazel build $(BAZEL_ARG) --noenable_bzlmod -c opt //... && \
 		bazel test $(BAZEL_ARG) -c opt //... && \
 		bazel run $(BAZEL_ARG) -c opt :install -- -s /usr/local/bin; \
 	fi;
