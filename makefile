@@ -68,7 +68,7 @@ verible:
 		cd ./$@ && \
 		git switch master && \
 		git pull && \
-		bazel build -c opt //... && \
+		bazel build --noenable_bzlmod -c opt //... && \
 		bazel test -c opt //... && \
 		bazel run -c opt :install -- -s /usr/local/bin; \
 	fi;
