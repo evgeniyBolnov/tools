@@ -71,7 +71,7 @@ verible:
 		git pull && \
 		bazel build $(BAZEL_ARG) --noenable_bzlmod -c opt //... && \
 		bazel test $(BAZEL_ARG) -c opt //... && \
-		bazel run -$(BAZEL_ARG) c opt :install -- -s /usr/local/bin; \
+		bazel run $(BAZEL_ARG) -c opt :install -- -s /usr/local/bin; \
 	fi;
 
 fzf:
