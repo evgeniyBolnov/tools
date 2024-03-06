@@ -26,6 +26,7 @@ veridian:    GIT := vivekmalneedi/veridian
 
 # Make specific args
 neovim: MAKE_ARGS := CMAKE_BUILD_TYPE=Release
+verible: BAZEL_ARG := --noenable_bzlmod
 
 MAKE_TARGETS := verilator iverilog neovim ctags mc
 CARGO_TARGETS := bat ripgrep lsd du-dust fd-find hyperfine bender veridian
@@ -68,9 +69,9 @@ verible:
 		cd ./$@ && \
 		git switch master && \
 		git pull && \
-		bazel build --noenable_bzlmod -c opt //... && \
-		bazel test -c opt //... && \
-		bazel run -c opt :install -- -s /usr/local/bin; \
+		bazel build $(BAZEL_ARG) --noenable_bzlmod -c opt //... && \
+		bazel test $(BAZEL_ARG) -c opt //... && \
+		bazel run -$(BAZEL_ARG) c opt :install -- -s /usr/local/bin; \
 	fi;
 
 fzf:
