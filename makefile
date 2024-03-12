@@ -71,6 +71,7 @@ verible:
 		bazel build -c opt //... && \
 		bazel test -c opt //... && \
 		bazel run -c opt :install -- -s /usr/local/bin; \
+		rm -f MODULE.bazel*; \
 	fi;
 
 fzf:
@@ -122,7 +123,8 @@ $(MAKE_TARGETS):
 	if [ `git -C ./$@ rev-parse HEAD` != `git -C ./$@ rev-parse origin/master` ]; then \
 		echo "====================" && \
 		cd ./$@ && \
-		git switch master && \
+		git switch master; \
+		git reset --hard; \
 		git pull && \
 		if [ -f ./autogen.sh ]; then \
 			./autogen.sh ;\
