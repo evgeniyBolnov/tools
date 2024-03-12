@@ -26,15 +26,16 @@ veridian:    GIT := vivekmalneedi/veridian
 
 # Make specific args
 neovim: MAKE_ARGS := CMAKE_BUILD_TYPE=Release
+verible: BAZEL_ARG := --noenable_bzlmod
 
 MAKE_TARGETS := verilator iverilog neovim ctags mc
 CARGO_TARGETS := bat ripgrep lsd du-dust fd-find hyperfine bender veridian
 
 .PHONY: check_dep svlint verible $(MAKE_TARGETS) $(CARGO_TARGETS) fzf
-default all: verible svlint $(CARGO_TARGETS) $(MAKE_TARGETS) fzf 
+default all: verible svlint $(CARGO_TARGETS) $(MAKE_TARGETS) fzf
 
 check_dep:
-	@$(foreach _,$(TOOLS),$(if $(shell apt list $(_) 2>/dev/null|grep installed),,$(eval INSTALL_LIST += $(_)))) \
+	@$(foreach _,$(TOOLS),$(if $(shell dpkg -s --no-pager $(_) 2>/dev/null|grep installed),,$(eval INSTALL_LIST += $(_)))) \
 	$(if $(INSTALL_LIST),\
 		$(info List to install: $(INSTALL_LIST)) \
 		if ! [ `which bazel` ]; then \
@@ -68,10 +69,9 @@ verible:
 		cd ./$@ && \
 		git switch master && \
 		git pull && \
-		bazel build -c opt //... && \
-		bazel test -c opt //... && \
-		bazel run -c opt :install -- -s /usr/local/bin; \
-		rm -f MODULE.bazel*; \
+		bazel build $(BAZEL_ARG) -c opt //... && \
+		bazel test $(BAZEL_ARG) -c opt //... && \
+		bazel run $(BAZEL_ARG) -c opt :install -- -s /usr/local/bin; \
 	fi;
 
 fzf:
@@ -108,7 +108,6 @@ $(CARGO_TARGETS):
 		git pull && \
 		cargo build --release && \
 		cp `find target/release/ -maxdepth 1 -type f -executable` ~/.cargo/bin/ ; \
-#		cargo install --force $@;\
 	fi;
 
 $(MAKE_TARGETS):
