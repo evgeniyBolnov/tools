@@ -125,13 +125,8 @@ $(MAKE_TARGETS):
 		git switch master; \
 		git reset --hard; \
 		git pull && \
-		if [ -f ./autogen.sh ]; then \
-			./autogen.sh ;\
-		fi; \
-		if [ -f ./configure.ac ]; then \
-			autoconf && \
-			./configure; \
-		fi; \
+		[ -f ./autogen.sh ] && ./autogen.sh; \
+		[ -f ./configure.ac ] && autoconf && ./configure; \
 		make $(MAKE_ARGS) -j`nproc` && \
 		sudo make install && \
 		sudo make distclean; \
