@@ -24,15 +24,17 @@ mc:          GIT := MidnightCommander/mc
 svls:        GIT := dalance/svls
 veridian:    GIT := vivekmalneedi/veridian
 
+PAR := 4
+
 # Make specific args
 neovim: MAKE_ARGS := CMAKE_BUILD_TYPE=Release
 verible: BAZEL_ARG := --noenable_bzlmod
 
-MAKE_TARGETS := verilator iverilog neovim ctags mc
+MAKE_TARGETS  := iverilog neovim ctags mc
 CARGO_TARGETS := bat ripgrep lsd du-dust fd-find hyperfine bender veridian
 
-.PHONY: check_dep svlint verible $(MAKE_TARGETS) $(CARGO_TARGETS) fzf
-default all: verible svlint $(CARGO_TARGETS) $(MAKE_TARGETS) fzf
+.PHONY: check_dep svlint verible verilator $(MAKE_TARGETS) $(CARGO_TARGETS) fzf
+default all: verible verilator svlint $(CARGO_TARGETS) $(MAKE_TARGETS) fzf
 
 check_dep:
 	@$(foreach _,$(TOOLS),$(if $(shell dpkg -s --no-pager $(_) 2>/dev/null|grep installed),,$(eval INSTALL_LIST += $(_)))) \
@@ -57,8 +59,8 @@ check_dep:
 
 verible:
 	@if ! [ -d ./$@ ]; then \
-		git clone https://github.com/$(GIT).git; \
-		cd ./$@; git reset --hard HEAD~; cd ..;\
+		git clone -q https://github.com/$(GIT).git; \
+		cd ./$@; git reset -q --hard HEAD~; cd ..;\
 	fi; \
 	git -C ./$@ fetch origin -q > /dev/null; \
 	echo "=== Update $@ ==="; \
@@ -67,7 +69,7 @@ verible:
 	if [ `git -C ./$@ rev-parse HEAD` != `git -C ./$@ rev-parse origin/master` ]; then \
 		echo "====================" && \
 		cd ./$@ && \
-		git switch master && \
+		git switch -q master && \
 		git pull && \
 		bazel build $(BAZEL_ARG) -c opt //... && \
 		bazel test $(BAZEL_ARG) -c opt //... && \
@@ -76,8 +78,8 @@ verible:
 
 fzf:
 	@if ! [ -d ./$@ ]; then \
-		git clone https://github.com/$(GIT).git $@; \
-		cd ./$@; git reset --hard HEAD~; cd ..;\
+		git clone -q https://github.com/$(GIT).git $@; \
+		cd ./$@; git reset -q --hard HEAD~; cd ..;\
 	fi; \
 	git -C ./$@ fetch origin -q > /dev/null; \
 	echo "=== Update $@ ==="; \
@@ -86,7 +88,7 @@ fzf:
 	if [ `git -C ./$@ rev-parse HEAD` != `git -C ./$@ rev-parse origin/master` ]; then \
 		echo "====================" && \
 		cd ./$@ && \
-		git switch master && \
+		git switch -q master && \
 		git pull && \
 		./install --all --no-fish; \
 	fi;
@@ -94,8 +96,8 @@ fzf:
 
 $(CARGO_TARGETS):
 	@if ! [ -d ./$@ ]; then \
-		git clone https://github.com/$(GIT).git $@; \
-		cd ./$@; git reset --hard HEAD~; cd ..;\
+		git clone -q https://github.com/$(GIT).git $@; \
+		cd ./$@; git reset -q --hard HEAD~; cd ..;\
 	fi; \
 	git -C ./$@ fetch origin -q > /dev/null; \
 	echo "=== Update $@ ==="; \
@@ -104,27 +106,28 @@ $(CARGO_TARGETS):
 	if [ `git -C ./$@ rev-parse HEAD` != `git -C ./$@ rev-parse origin/master` ]; then \
 		echo "====================" && \
 		cd ./$@ && \
-		git switch master && \
+		git switch -q master && \
 		git pull && \
 		cargo build --release && \
-		cp `find target/release/ -maxdepth 1 -type f -executable` ~/.cargo/bin/ ; \
+		cp `find target/release/ -maxdepth 1 -type f -executable` ~/.cargo/bin/; \
+		cargo clean; \
 	fi;
 
 $(MAKE_TARGETS):
 	@if ! [ -d ./$@ ]; then \
-		git clone https://github.com/$(GIT).git $@; \
-		cd ./$@; git reset --hard HEAD~; cd ..;\
+		git clone -q https://github.com/$(GIT).git $@; \
+		cd ./$@; git reset -q --hard HEAD~; cd ..;\
 	fi; \
 	git -C ./$@ fetch origin -q > /dev/null; \
 	echo "=== Update $@ ==="; \
 	echo "Installed version: `git -C ./$@ rev-parse --short HEAD`"; \
-	echo "Latest version: `git -C ./$@ rev-parse --short origin/master`"; \
-	if [ `git -C ./$@ rev-parse HEAD` != `git -C ./$@ rev-parse origin/master` ]; then \
+	echo "Latest version: `git -C ./$@ rev-parse --short origin/HEAD`"; \
+	if [ `git -C ./$@ rev-parse HEAD` != `git -C ./$@ rev-parse origin/HEAD` ]; then \
 		echo "====================" && \
 		cd ./$@ && \
-		git switch master; \
-		git reset --hard; \
+		git reset -q --hard; \
 		git pull && \
+		git submodule update --init --recursive && \
 		if [ -f ./autogen.sh ]; then \
 			./autogen.sh ;\
 		fi; \
@@ -132,8 +135,27 @@ $(MAKE_TARGETS):
 			autoconf && \
 			./configure; \
 		fi; \
-		make $(MAKE_ARGS) -j`nproc` && \
+		make $(MAKE_ARGS) -j$(PAR) && \
 		sudo make install && \
 		sudo make distclean; \
 	fi;
 
+verilator:
+	@if ! [ -d ./$@ ]; then \
+		git clone -q https://github.com/$(GIT).git $@; \
+		cd ./$@; git reset -q --hard HEAD~; cd ..;\
+	fi; \
+	git -C ./$@ fetch origin -q > /dev/null; \
+	echo "=== Update $@ ==="; \
+	echo "Installed version: `git -C ./$@ rev-parse --short HEAD`"; \
+	echo "Latest version: `git -C ./$@ rev-parse --short origin/HEAD`"; \
+	if [ `git -C ./$@ rev-parse HEAD` != `git -C ./$@ rev-parse origin/HEAD` ]; then \
+		echo "====================" && \
+		cd ./$@ && \
+		git reset -q --hard; \
+		git pull && \
+		git submodule update --init --recursive && \
+		./configure; \
+		make -j$(PAR) && \
+		sudo make install; \
+	fi;
