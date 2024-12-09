@@ -129,7 +129,7 @@ $(MAKE_TARGETS):
 		git pull && \
 		git submodule update --init --recursive && \
 		if [ -f ./autogen.sh ]; then \
-			./autogen.sh ;\
+			./autogen.sh; \
 		fi; \
 		if [ -f ./configure.ac ]; then \
 			autoconf && \
