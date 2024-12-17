@@ -28,7 +28,8 @@ PAR := 4
 
 # Make specific args
 neovim: MAKE_ARGS := CMAKE_BUILD_TYPE=Release
-verible: BAZEL_ARG := --noenable_bzlmod
+#verible: BAZEL_ARG := --noenable_bzlmod
+verible: BAZEL_ARG := --//bazel:use_local_flex_bison
 
 MAKE_TARGETS  := iverilog neovim ctags mc
 CARGO_TARGETS := bat ripgrep lsd du-dust fd-find hyperfine bender veridian
@@ -72,9 +73,11 @@ verible:
 		git switch -q master && \
 		git pull && \
 		bazel build $(BAZEL_ARG) -c opt //... && \
+		sudo .github/bin/simple-install.sh /usr/localbin && \
 		bazel test $(BAZEL_ARG) -c opt //... && \
-		bazel run $(BAZEL_ARG) -c opt :install -- -s /usr/local/bin; \
 	fi;
+
+# bazel run $(BAZEL_ARG) -c opt :install -- -s /usr/local/bin; \
 
 fzf:
 	@if ! [ -d ./$@ ]; then \
@@ -125,6 +128,7 @@ $(MAKE_TARGETS):
 	if [ `git -C ./$@ rev-parse HEAD` != `git -C ./$@ rev-parse origin/HEAD` ]; then \
 		echo "====================" && \
 		cd ./$@ && \
+		git switch master; \
 		git reset -q --hard; \
 		git pull && \
 		git submodule update --init --recursive && \
