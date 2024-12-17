@@ -74,7 +74,7 @@ verible:
 		git pull && \
 		bazel build $(BAZEL_ARG) -c opt //... && \
 		sudo .github/bin/simple-install.sh /usr/localbin && \
-		bazel test $(BAZEL_ARG) -c opt //... && \
+		bazel test $(BAZEL_ARG) -c opt //...; \
 	fi;
 
 # bazel run $(BAZEL_ARG) -c opt :install -- -s /usr/local/bin; \
