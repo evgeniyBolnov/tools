@@ -159,6 +159,7 @@ verilator:
 		git reset -q --hard; \
 		git pull && \
 		git submodule update --init --recursive && \
+		autoconf && \
 		./configure; \
 		make -j$(PAR) && \
 		sudo make install; \
