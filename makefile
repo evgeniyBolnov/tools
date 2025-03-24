@@ -1,4 +1,7 @@
-TOOLS := make git flex bison autoconf gcc g++ zip unzip apt-transport-https curl gnupg bazel help2man perl python3 ccache cmake gettext gperf check libslang2-dev
+TOOLS := make git flex bison autoconf gcc g++ zip unzip apt-transport-https \
+				 curl gnupg bazel help2man perl python3 ccache cmake gettext gperf \
+				 check libslang2-dev pkg-config autopoint libglib2.0-dev libgpm-dev \
+				 libext2fs-dev libtool
 
 SYS_UPDATE  := apt-get update
 SYS_INSTALL := apt-get install -y
