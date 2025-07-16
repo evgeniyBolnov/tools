@@ -65,7 +65,7 @@ check_dep:
 verible:
 	@if ! [ -d ./$@ ]; then \
 		git clone -q https://github.com/$(GIT).git; \
-		cd ./$@; git reset -q --hard HEAD~; cd ..;\
+		cd ./$@ && git reset -q --hard HEAD~ && cd ..;\
 	fi; \
 	git -C ./$@ fetch origin -q > /dev/null; \
 	echo "=== Update $@ ==="; \
@@ -86,7 +86,7 @@ verible:
 fzf:
 	@if ! [ -d ./$@ ]; then \
 		git clone -q https://github.com/$(GIT).git $@; \
-		cd ./$@; git reset -q --hard HEAD~; cd ..;\
+		cd ./$@ && git reset -q --hard HEAD~ && cd ..;\
 	fi; \
 	git -C ./$@ fetch origin -q > /dev/null; \
 	echo "=== Update $@ ==="; \
@@ -104,7 +104,7 @@ fzf:
 $(CARGO_TARGETS):
 	@if ! [ -d ./$@ ]; then \
 		git clone -q https://github.com/$(GIT).git $@; \
-		cd ./$@; git reset -q --hard HEAD~; cd ..;\
+		cd ./$@ && git reset -q --hard HEAD~ && cd ..;\
 	fi; \
 	git -C ./$@ fetch origin -q > /dev/null; \
 	echo "=== Update $@ ==="; \
@@ -123,7 +123,7 @@ $(CARGO_TARGETS):
 $(MAKE_TARGETS):
 	@if ! [ -d ./$@ ]; then \
 		git clone -q https://github.com/$(GIT).git $@; \
-		cd ./$@; git reset -q --hard HEAD~; cd ..;\
+		cd ./$@ && git reset -q --hard HEAD~ && cd ..;\
 	fi; \
 	git -C ./$@ fetch origin -q > /dev/null; \
 	echo "=== Update $@ ==="; \
@@ -151,7 +151,7 @@ $(MAKE_TARGETS):
 verilator:
 	@if ! [ -d ./$@ ]; then \
 		git clone -q https://github.com/$(GIT).git $@; \
-		cd ./$@; git reset -q --hard HEAD~; cd ..;\
+		cd ./$@ && git reset -q --hard HEAD~ && cd ..;\
 	fi; \
 	git -C ./$@ fetch origin -q > /dev/null; \
 	echo "=== Update $@ ==="; \
