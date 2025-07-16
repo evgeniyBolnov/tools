@@ -26,6 +26,7 @@ ctags:       GIT := universal-ctags/ctags
 mc:          GIT := MidnightCommander/mc
 svls:        GIT := dalance/svls
 veridian:    GIT := vivekmalneedi/veridian
+lazygit:     GIT := jesseduffield/lazygit
 
 PAR := 4
 
@@ -34,7 +35,7 @@ neovim: MAKE_ARGS := CMAKE_BUILD_TYPE=Release
 #verible: BAZEL_ARG := --noenable_bzlmod
 verible: BAZEL_ARG := --//bazel:use_local_flex_bison
 
-MAKE_TARGETS  := iverilog neovim ctags mc
+MAKE_TARGETS  := iverilog neovim ctags mc lazygit
 CARGO_TARGETS := bat ripgrep lsd du-dust fd-find hyperfine bender veridian
 
 .PHONY: check_dep svlint verible verilator $(MAKE_TARGETS) $(CARGO_TARGETS) fzf
